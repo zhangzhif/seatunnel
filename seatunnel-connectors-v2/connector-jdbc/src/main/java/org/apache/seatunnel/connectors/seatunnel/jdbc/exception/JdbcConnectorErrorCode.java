@@ -29,7 +29,9 @@ public enum JdbcConnectorErrorCode implements SeaTunnelErrorCode {
             "JDBC-05", "transaction operation failed, such as (commit, rollback) etc.."),
     NO_SUITABLE_DIALECT_FACTORY("JDBC-06", "No suitable dialect factory found"),
     DONT_SUPPORT_SINK("JDBC-07", "The jdbc type don't support sink"),
-    KERBEROS_AUTHENTICATION_FAILED("JDBC-08", "Kerberos authentication failed");
+    KERBEROS_AUTHENTICATION_FAILED("JDBC-08", "Kerberos authentication failed"),
+    SQL_EXECUTION_FAILED("JDBC-09", "Execute SQL failed");
+
     private final String code;
 
     private final String description;
