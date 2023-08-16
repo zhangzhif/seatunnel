@@ -10,7 +10,7 @@ import com.google.auto.service.AutoService;
 import java.util.List;
 
 @AutoService(ZetaUDF.class)
-public class Desensitized implements ZetaUDF {
+public class DesensitizeTransform implements ZetaUDF {
     @Override
     public String functionName() {
         return "DESENSITIZED";
