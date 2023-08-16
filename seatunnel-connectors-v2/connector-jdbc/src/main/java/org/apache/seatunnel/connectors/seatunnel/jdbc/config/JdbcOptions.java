@@ -133,6 +133,18 @@ public interface JdbcOptions {
                     .defaultValue(false)
                     .withDescription("support upsert by insert only");
 
+    Option<List<String>> PRE_SQL =
+            Options.key("pre_sql")
+                    .listType()
+                    .noDefaultValue()
+                    .withDescription("previous sql before sink");
+
+    Option<List<String>> POST_SQL =
+            Options.key("post_sql")
+                    .listType()
+                    .noDefaultValue()
+                    .withDescription("post sql after sink");
+
     /** source config */
     Option<String> PARTITION_COLUMN =
             Options.key("partition_column")

@@ -124,6 +124,7 @@ public class SinkFlowLifeCycle<T, CommitInfoT extends Serializable, AggregatedCo
             committerTaskAddress = getCommitterTaskAddress();
         }
         registerCommitter();
+        writer.prepared();
     }
 
     private Address getCommitterTaskAddress() throws ExecutionException, InterruptedException {

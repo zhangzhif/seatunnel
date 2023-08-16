@@ -17,6 +17,7 @@
 
 package org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.oracle;
 
+import org.apache.seatunnel.api.table.catalog.TablePath;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.converter.JdbcRowConverter;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.JdbcDialect;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.JdbcDialectTypeMapper;
@@ -56,12 +57,17 @@ public class OracleDialect implements JdbcDialect {
 
     @Override
     public String quoteIdentifier(String identifier) {
-        return identifier;
+        return "\"" + identifier + "\"";
     }
 
     @Override
     public String tableIdentifier(String database, String tableName) {
-        return quoteIdentifier(tableName);
+        return quoteIdentifier(database) + "." + quoteIdentifier(tableName);
+    }
+
+    @Override
+    public String extractTableName(TablePath tablePath) {
+        return tablePath.getTableName();
     }
 
     @Override

@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.psql;
+package org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.gaussdb;
 
 import org.apache.seatunnel.api.table.catalog.TablePath;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.converter.JdbcRowConverter;
@@ -26,27 +26,25 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-public class PostgresDialect implements JdbcDialect {
+public class GaussDbDialect implements JdbcDialect {
 
     public static final int DEFAULT_POSTGRES_FETCH_SIZE = 128;
 
     @Override
     public String dialectName() {
-        return "PostgreSQL";
+        return "GaussDb";
     }
 
     @Override
     public JdbcRowConverter getRowConverter() {
-        return new PostgresJdbcRowConverter();
+        return new GaussDbJdbcRowConverter();
     }
 
     @Override
     public JdbcDialectTypeMapper getJdbcDialectTypeMapper() {
-        return new PostgresTypeMapper();
+        return new GaussDbTypeMapper();
     }
 
     @Override
@@ -67,25 +65,7 @@ public class PostgresDialect implements JdbcDialect {
     @Override
     public Optional<String> getUpsertStatement(
             String database, String tableName, String[] fieldNames, String[] uniqueKeyFields) {
-        String uniqueColumns =
-                Arrays.stream(uniqueKeyFields)
-                        .map(this::quoteIdentifier)
-                        .collect(Collectors.joining(", "));
-        String updateClause =
-                Arrays.stream(fieldNames)
-                        .map(
-                                fieldName ->
-                                        quoteIdentifier(fieldName)
-                                                + "=EXCLUDED."
-                                                + quoteIdentifier(fieldName))
-                        .collect(Collectors.joining(", "));
-        String upsertSQL =
-                String.format(
-                        "%s ON CONFLICT (%s) DO UPDATE SET %s",
-                        getInsertIntoStatement(database, tableName, fieldNames),
-                        uniqueColumns,
-                        updateClause);
-        return Optional.of(upsertSQL);
+        return Optional.empty();
     }
 
     @Override

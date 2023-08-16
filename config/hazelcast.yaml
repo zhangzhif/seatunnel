@@ -16,7 +16,7 @@
 #
 
 hazelcast:
-  cluster-name: seatunnel
+  cluster-name: ocean
   network:
     rest-api:
       enabled: true

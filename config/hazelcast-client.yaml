@@ -16,7 +16,7 @@
 #
 
 hazelcast-client:
-  cluster-name: seatunnel
+  cluster-name: ocean
   properties:
     hazelcast.logging.type: log4j2
   network:
