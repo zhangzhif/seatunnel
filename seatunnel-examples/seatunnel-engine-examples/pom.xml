@@ -57,6 +57,14 @@
         </dependency>
         <!--   seatunnel-transforms-v2   -->
 
+        <!--   seatunnel-transforms-ocean   -->
+        <dependency>
+            <groupId>org.apache.seatunnel</groupId>
+            <artifactId>seatunnel-transform-ocean</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!--   seatunnel-transforms-ocean   -->
+
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-fake</artifactId>
