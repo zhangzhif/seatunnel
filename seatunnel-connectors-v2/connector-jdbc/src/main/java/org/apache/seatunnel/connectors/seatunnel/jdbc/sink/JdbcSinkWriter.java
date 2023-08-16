@@ -120,6 +120,34 @@ public class JdbcSinkWriter
     }
 
     @Override
+    public void prepared() throws IOException {
+        if (CollectionUtils.isNotEmpty(jdbcSinkConfig.getPreSQL())) {
+            Connection conn = null;
+            try {
+                tryOpen();
+                conn = connectionProvider.getOrEstablishConnection();
+                conn.setAutoCommit(false);
+                for (String preSQL : jdbcSinkConfig.getPreSQL()) {
+                    if (StringUtils.isNotBlank(preSQL)) {
+                        PreparedStatement preparedStatement = conn.prepareStatement(preSQL.trim());
+                        preparedStatement.execute();
+                    }
+                }
+                conn.commit();
+                conn.setAutoCommit(true);
+            } catch (SQLException | ClassNotFoundException e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                throw new JdbcConnectorException(
+                        JdbcConnectorErrorCode.SQL_EXECUTION_FAILED, "Execute preSQL failed", e);
+            }
+        }
+    }
+
+    @Override
     public List<JdbcSinkState> snapshotState(long checkpointId) {
         return Collections.emptyList();
     }
@@ -164,6 +192,29 @@ public class JdbcSinkWriter
                     CommonErrorCodeDeprecated.WRITER_OPERATION_FAILED,
                     "unable to close JDBC sink write",
                     e);
+        }
+        if (CollectionUtils.isNotEmpty(jdbcSinkConfig.getPostSQL())) {
+            Connection conn = null;
+            try {
+                conn = connectionProvider.getOrEstablishConnection();
+                conn.setAutoCommit(false);
+                for (String postSQL : jdbcSinkConfig.getPostSQL()) {
+                    if (StringUtils.isNotBlank(postSQL)) {
+                        PreparedStatement preparedStatement = conn.prepareStatement(postSQL.trim());
+                        preparedStatement.execute();
+                    }
+                }
+                conn.commit();
+                conn.setAutoCommit(true);
+            } catch (SQLException | ClassNotFoundException e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+                throw new JdbcConnectorException(
+                        JdbcConnectorErrorCode.SQL_EXECUTION_FAILED, "Execute preSQL failed", e);
+            }
         }
         outputFormat.close();
     }
