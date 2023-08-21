@@ -190,9 +190,11 @@ public class MongoDBConnectorDeserializationSchema
             @Override
             public Object apply(BsonValue bsonValue) {
                 if (isBsonValueNull(bsonValue) || isBsonDecimalNaN(bsonValue)) {
-                    throw new MongodbConnectorException(
-                            UNSUPPORTED_OPERATION,
-                            "Unable to convert to <" + type + "> from nullable value " + bsonValue);
+                    return null;
+                    //                    throw new MongodbConnectorException(
+                    //                            UNSUPPORTED_OPERATION,
+                    //                            "Unable to convert to <" + type + "> from nullable
+                    // value " + bsonValue);
                 }
                 return internalConverter.apply(bsonValue);
             }
