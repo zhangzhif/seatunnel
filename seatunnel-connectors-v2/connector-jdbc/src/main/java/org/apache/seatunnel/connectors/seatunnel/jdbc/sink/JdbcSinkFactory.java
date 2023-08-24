@@ -22,15 +22,20 @@ import org.apache.seatunnel.api.configuration.util.OptionRule;
 import org.apache.seatunnel.api.sink.DataSaveMode;
 import org.apache.seatunnel.api.table.catalog.CatalogOptions;
 import org.apache.seatunnel.api.table.catalog.CatalogTable;
+import org.apache.seatunnel.api.table.catalog.Column;
 import org.apache.seatunnel.api.table.catalog.ConstraintKey;
+import org.apache.seatunnel.api.table.catalog.PhysicalColumn;
 import org.apache.seatunnel.api.table.catalog.PrimaryKey;
 import org.apache.seatunnel.api.table.catalog.TableIdentifier;
+import org.apache.seatunnel.api.table.catalog.TableSchema;
 import org.apache.seatunnel.api.table.connector.TableSink;
 import org.apache.seatunnel.api.table.factory.Factory;
 import org.apache.seatunnel.api.table.factory.TableFactoryContext;
 import org.apache.seatunnel.api.table.factory.TableSinkFactory;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.catalog.JdbcCatalogOptions;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.config.JdbcSinkConfig;
+import org.apache.seatunnel.connectors.seatunnel.jdbc.exception.JdbcConnectorErrorCode;
+import org.apache.seatunnel.connectors.seatunnel.jdbc.exception.JdbcConnectorException;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.JdbcDialect;
 import org.apache.seatunnel.connectors.seatunnel.jdbc.internal.dialect.JdbcDialectLoader;
 
@@ -39,7 +44,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import com.google.auto.service.AutoService;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -147,6 +154,52 @@ public class JdbcSinkFactory implements TableSinkFactory {
                         sinkConfig.getJdbcConnectionConfig().getUrl(),
                         sinkConfig.getJdbcConnectionConfig().getCompatibleMode());
         CatalogTable finalCatalogTable = catalogTable;
+
+        List<String> customColumnsNames = sinkConfig.getFields();
+        if (sinkConfig.getFields().size() != 0) {
+            TableSchema tableSchema = finalCatalogTable.getTableSchema();
+            List<Column> sinkColumns = new ArrayList<>(customColumnsNames.size());
+            List<Column> sourceColumns = tableSchema.getColumns();
+            if (sourceColumns.size() != customColumnsNames.size()) {
+                throw new JdbcConnectorException(
+                        JdbcConnectorErrorCode.COLUMN_NUMBER_DIFFERENT,
+                        "fields is inconsistent with the original table");
+            }
+            for (int i = 0; i < sourceColumns.size(); i++) {
+                Column column = sourceColumns.get(i);
+                PhysicalColumn physicalColumn =
+                        PhysicalColumn.of(
+                                customColumnsNames.get(i),
+                                column.getDataType(),
+                                column.getColumnLength(),
+                                true,
+                                column.getDefaultValue(),
+                                column.getComment());
+                sinkColumns.add(physicalColumn);
+            }
+            TableSchema customTableSchema =
+                    tableSchema
+                            .builder()
+                            .columns(sinkColumns)
+                            .primaryKey(tableSchema.getPrimaryKey())
+                            .constraintKey(tableSchema.getConstraintKeys())
+                            .build();
+            CatalogTable customCatalogTable =
+                    CatalogTable.of(
+                            finalCatalogTable.getTableId(),
+                            customTableSchema,
+                            finalCatalogTable.getOptions(),
+                            finalCatalogTable.getPartitionKeys(),
+                            finalCatalogTable.getComment(),
+                            finalCatalogTable.getCatalogName());
+            return () ->
+                    new JdbcSink(
+                            options,
+                            sinkConfig,
+                            dialect,
+                            DataSaveMode.KEEP_SCHEMA_AND_DATA,
+                            customCatalogTable);
+        }
         return () ->
                 new JdbcSink(
                         options,
