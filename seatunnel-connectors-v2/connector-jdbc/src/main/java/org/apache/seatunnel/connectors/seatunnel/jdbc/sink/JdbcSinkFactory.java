@@ -156,7 +156,7 @@ public class JdbcSinkFactory implements TableSinkFactory {
         CatalogTable finalCatalogTable = catalogTable;
 
         List<String> customColumnsNames = sinkConfig.getFields();
-        if (sinkConfig.getFields().size() != 0) {
+        if (CollectionUtils.isNotEmpty(customColumnsNames)) {
             TableSchema tableSchema = finalCatalogTable.getTableSchema();
             List<Column> sinkColumns = new ArrayList<>(customColumnsNames.size());
             List<Column> sourceColumns = tableSchema.getColumns();
