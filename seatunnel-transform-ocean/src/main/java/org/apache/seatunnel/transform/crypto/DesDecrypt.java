@@ -1,5 +1,6 @@
 package org.apache.seatunnel.transform.crypto;
 
+import cn.hutool.core.util.StrUtil;
 import org.apache.seatunnel.api.table.type.BasicType;
 import org.apache.seatunnel.api.table.type.SeaTunnelDataType;
 import org.apache.seatunnel.transform.sql.zeta.ZetaUDF;
@@ -26,12 +27,15 @@ public class DesDecrypt implements ZetaUDF {
     @Override
     public Object evaluate(List<Object> args) {
         String data = (String) args.get(0);
-        byte[] key;
-        if (args.size() == 2) {
-            key = ((String) args.get(1)).getBytes();
-        } else {
-            key = Constants.DEFAULT_DES_KEY;
+        if (StrUtil.isNotEmpty(data)) {
+            byte[] key;
+            if (args.size() == 2) {
+                key = ((String) args.get(1)).getBytes();
+            } else {
+                key = Constants.DEFAULT_DES_KEY;
+            }
+            return SecureUtil.des(key).decryptStr(data, Charset.forName(Constants.CRYPTO_CHARSET));
         }
-        return SecureUtil.des(key).decryptStr(data, Charset.forName(Constants.CRYPTO_CHARSET));
+        return null;
     }
 }

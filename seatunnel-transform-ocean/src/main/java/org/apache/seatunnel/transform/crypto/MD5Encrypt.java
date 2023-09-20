@@ -1,5 +1,6 @@
 package org.apache.seatunnel.transform.crypto;
 
+import cn.hutool.core.util.StrUtil;
 import org.apache.seatunnel.api.table.type.BasicType;
 import org.apache.seatunnel.api.table.type.SeaTunnelDataType;
 import org.apache.seatunnel.transform.sql.zeta.ZetaUDF;
@@ -25,6 +26,9 @@ public class MD5Encrypt implements ZetaUDF {
     @Override
     public Object evaluate(List<Object> args) {
         String data = (String) args.get(0);
-        return SecureUtil.md5(data);
+        if (StrUtil.isNotEmpty(data)) {
+            return SecureUtil.md5(data);
+        }
+        return null;
     }
 }
