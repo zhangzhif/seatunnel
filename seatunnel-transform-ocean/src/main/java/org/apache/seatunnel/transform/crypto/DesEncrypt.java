@@ -1,6 +1,5 @@
 package org.apache.seatunnel.transform.crypto;
 
-import cn.hutool.core.util.StrUtil;
 import org.apache.seatunnel.api.table.type.BasicType;
 import org.apache.seatunnel.api.table.type.SeaTunnelDataType;
 import org.apache.seatunnel.transform.sql.zeta.ZetaUDF;
