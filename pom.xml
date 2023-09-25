@@ -52,6 +52,7 @@
         <module>seatunnel-e2e</module>
         <module>seatunnel-shade</module>
         <module>seatunnel-transform-ocean</module>
+        <module>seatunnel-connectors-v2-ocean</module>
     </modules>
 
     <properties>
