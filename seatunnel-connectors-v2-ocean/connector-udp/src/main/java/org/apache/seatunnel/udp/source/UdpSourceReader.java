@@ -25,6 +25,7 @@ import org.apache.seatunnel.udp.exception.UdpConnectorException;
 import org.apache.seatunnel.udp.util.ByteConvertUtil;
 
 import cn.hutool.core.util.ObjectUtil;
+import cn.hutool.core.util.StrUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
@@ -93,6 +94,12 @@ public class UdpSourceReader extends AbstractSingleSplitReader<SeaTunnelRow> imp
             int length = datagramPacket.getLength();
             //            String data = ByteConvertUtil.bytesToHexString(byteData, length);
             String data = new String(byteData, 0, length);
+            //                only one column
+            if (fields.keySet().size() == 1
+                    && StrUtil.isEmpty(fields.get(fields.keySet().stream().findFirst().get()))) {
+                output.collect(new SeaTunnelRow(new String[] {data}));
+                continue;
+            }
             for (String field : fields.keySet()) {
                 String[] substrIndex = fields.get(field).split("-");
                 String fieldData =
