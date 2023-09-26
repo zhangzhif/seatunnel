@@ -97,6 +97,6 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
     @Override
     public AbstractSingleSplitReader<SeaTunnelRow> createReader(
             SingleSplitReaderContext readerContext) {
-        return new UdpSourceReader(this.parameter, readerContext, this.seaTunnelDataType);
+        return new UdpSourceReader(this.parameter);
     }
 }
