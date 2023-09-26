@@ -18,16 +18,16 @@
 package org.apache.seatunnel.udp.source;
 
 import org.apache.seatunnel.api.source.Collector;
-import org.apache.seatunnel.api.table.type.SeaTunnelDataType;
 import org.apache.seatunnel.api.table.type.SeaTunnelRow;
 import org.apache.seatunnel.connectors.seatunnel.common.source.AbstractSingleSplitReader;
-import org.apache.seatunnel.connectors.seatunnel.common.source.SingleSplitReaderContext;
 import org.apache.seatunnel.udp.exception.UdpConnectorErrorCode;
 import org.apache.seatunnel.udp.exception.UdpConnectorException;
 import org.apache.seatunnel.udp.util.ByteConvertUtil;
 
+import cn.hutool.core.util.ObjectUtil;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -36,20 +36,15 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class UdpSourceReader extends AbstractSingleSplitReader<SeaTunnelRow> {
+public class UdpSourceReader extends AbstractSingleSplitReader<SeaTunnelRow> implements Runnable {
     private final UdpSourceParameter parameter;
-    private final SingleSplitReaderContext context;
     private DatagramSocket datagramSocket;
-    private SeaTunnelDataType<SeaTunnelRow> seaTunnelDataType;
     private Map<String, String> fields;
+    private Collector<SeaTunnelRow> output;
+    private Thread pollThread;
 
-    UdpSourceReader(
-            UdpSourceParameter parameter,
-            SingleSplitReaderContext context,
-            SeaTunnelDataType<SeaTunnelRow> seaTunnelDataType) {
+    UdpSourceReader(UdpSourceParameter parameter) {
         this.parameter = parameter;
-        this.context = context;
-        this.seaTunnelDataType = seaTunnelDataType;
     }
 
     @Override
@@ -71,31 +66,42 @@ public class UdpSourceReader extends AbstractSingleSplitReader<SeaTunnelRow> {
 
     @Override
     public void pollNext(Collector<SeaTunnelRow> output) {
+        // use async thread to poll data,because receive method is block,
+        // /
+        synchronized (this) {
+            if (ObjectUtil.isEmpty(pollThread)) {
+                this.output = output;
+                pollThread = new Thread(this);
+                pollThread.start();
+            }
+        }
+    }
+
+    @Override
+    public void run() {
+        byte[] dataBuffer = new byte[1024];
         while (true) {
             List<Integer> row = new ArrayList<>();
-            byte[] dataBuffer = new byte[1024];
+            DatagramPacket datagramPacket = new DatagramPacket(dataBuffer, 0, dataBuffer.length);
             try {
-                DatagramPacket datagramPacket =
-                        new DatagramPacket(dataBuffer, 0, dataBuffer.length);
                 datagramSocket.receive(datagramPacket);
-                byte[] byteData = datagramPacket.getData();
-                int length = datagramPacket.getLength();
-                //            String data = ByteConvertUtil.bytesToHexString(byteData, length);
-                String data = new String(byteData, 0, length);
-                for (String field : fields.keySet()) {
-                    String[] substrIndex = fields.get(field).split("-");
-                    String fieldData =
-                            data.substring(
-                                    Integer.parseInt(substrIndex[0]),
-                                    Integer.parseInt(substrIndex[1]));
-                    int parseData = ByteConvertUtil.parse(fieldData);
-                    row.add(parseData);
-                }
-                output.collect(new SeaTunnelRow(row.toArray()));
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new UdpConnectorException(
                         UdpConnectorErrorCode.UDP_DATA_RECEVIER_FAILED, e.getMessage());
             }
+            byte[] byteData = datagramPacket.getData();
+            int length = datagramPacket.getLength();
+            //            String data = ByteConvertUtil.bytesToHexString(byteData, length);
+            String data = new String(byteData, 0, length);
+            for (String field : fields.keySet()) {
+                String[] substrIndex = fields.get(field).split("-");
+                String fieldData =
+                        data.substring(
+                                Integer.parseInt(substrIndex[0]), Integer.parseInt(substrIndex[1]));
+                int parseData = ByteConvertUtil.parse(fieldData);
+                row.add(parseData);
+            }
+            output.collect(new SeaTunnelRow(row.toArray()));
         }
     }
 }
