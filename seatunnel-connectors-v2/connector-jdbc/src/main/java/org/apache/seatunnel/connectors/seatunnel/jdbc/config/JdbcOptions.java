@@ -144,11 +144,6 @@ public interface JdbcOptions {
                     .noDefaultValue()
                     .withDescription("post sql after sink");
 
-    Option<List<String>> FIELDS =
-            Options.key("fields")
-                    .listType()
-                    .noDefaultValue()
-                    .withDescription("custom columns name");
 
     /** source config */
     Option<String> PARTITION_COLUMN =
