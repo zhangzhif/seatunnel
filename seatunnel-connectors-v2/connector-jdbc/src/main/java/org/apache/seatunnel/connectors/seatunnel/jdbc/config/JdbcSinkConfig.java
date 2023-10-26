@@ -48,7 +48,6 @@ public class JdbcSinkConfig implements Serializable {
 
     private List<String> postSQL;
 
-    private List<String> fields;
 
     public static JdbcSinkConfig of(ReadonlyConfig config) {
         JdbcSinkConfigBuilder builder = JdbcSinkConfig.builder();
@@ -63,7 +62,6 @@ public class JdbcSinkConfig implements Serializable {
         builder.simpleSql(config.get(JdbcOptions.QUERY));
         config.getOptional(JdbcOptions.PRE_SQL).ifPresent(builder::preSQL);
         config.getOptional(JdbcOptions.POST_SQL).ifPresent(builder::postSQL);
-        config.getOptional(JdbcOptions.FIELDS).ifPresent(builder::fields);
         return builder.build();
     }
 }
