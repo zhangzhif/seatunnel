@@ -17,8 +17,7 @@
 
 package org.apache.seatunnel.udp.source;
 
-import org.apache.seatunnel.shade.com.typesafe.config.Config;
-
+import com.google.auto.service.AutoService;
 import org.apache.seatunnel.api.common.JobContext;
 import org.apache.seatunnel.api.common.PrepareFailException;
 import org.apache.seatunnel.api.common.SeaTunnelAPIErrorCode;
@@ -35,10 +34,9 @@ import org.apache.seatunnel.common.constants.PluginType;
 import org.apache.seatunnel.connectors.seatunnel.common.source.AbstractSingleSplitReader;
 import org.apache.seatunnel.connectors.seatunnel.common.source.AbstractSingleSplitSource;
 import org.apache.seatunnel.connectors.seatunnel.common.source.SingleSplitReaderContext;
+import org.apache.seatunnel.shade.com.typesafe.config.Config;
 import org.apache.seatunnel.udp.config.UdpConfigOptions;
 import org.apache.seatunnel.udp.exception.UdpConnectorException;
-
-import com.google.auto.service.AutoService;
 
 import java.util.Map;
 
@@ -47,6 +45,7 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
     private UdpSourceParameter parameter;
     private JobContext jobContext;
     private SeaTunnelDataType<SeaTunnelRow> seaTunnelDataType;
+
 
     @Override
     public Boundedness getBoundedness() {
@@ -64,7 +63,7 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
     public void prepare(Config pluginConfig) throws PrepareFailException {
         CheckResult result =
                 CheckConfigUtil.checkAllExists(
-                        pluginConfig, UdpConfigOptions.PORT.key(), UdpConfigOptions.FIELDS.key());
+                        pluginConfig, UdpConfigOptions.PORT.key(), UdpConfigOptions.FIELDS.key(), UdpConfigOptions.TYPE.key());
         if (!result.isSuccess()) {
             throw new UdpConnectorException(
                     SeaTunnelAPIErrorCode.CONFIG_VALIDATION_FAILED,
@@ -90,7 +89,7 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
         }
         this.seaTunnelDataType =
                 new SeaTunnelRowType(
-                        fieldsMap.keySet().toArray(new String[] {}), seaTunnelDataTypes);
+                        fieldsMap.keySet().toArray(new String[]{}), seaTunnelDataTypes);
         return this.seaTunnelDataType;
     }
 
