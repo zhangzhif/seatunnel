@@ -18,7 +18,6 @@
 package org.apache.seatunnel.udp.source;
 
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
-
 import org.apache.seatunnel.udp.config.UdpConfigOptions;
 
 import java.io.Serializable;
@@ -28,6 +27,9 @@ import java.util.Objects;
 public class UdpSourceParameter implements Serializable {
     private final Integer port;
     private Map<String, String> fields;
+    private String type;
+    private String radarSource;
+    private String delimiter;
 
     public Integer getPort() {
         return Objects.isNull(port) ? UdpConfigOptions.PORT.defaultValue() : port;
@@ -35,6 +37,18 @@ public class UdpSourceParameter implements Serializable {
 
     public Map<String, String> getFields() {
         return Objects.isNull(fields) ? UdpConfigOptions.FIELDS.defaultValue() : fields;
+    }
+
+    public String getType() {
+        return Objects.isNull(type) ? UdpConfigOptions.TYPE.defaultValue() : type;
+    }
+
+    public String getRadarSource() {
+        return Objects.isNull(radarSource) ? UdpConfigOptions.RADAR_SOURCE.defaultValue() : radarSource;
+    }
+
+    public String getDelimiter() {
+        return Objects.isNull(delimiter) ? UdpConfigOptions.DELIMITER.defaultValue() : delimiter;
     }
 
     public UdpSourceParameter(Config config) {
@@ -47,6 +61,21 @@ public class UdpSourceParameter implements Serializable {
             this.fields = (Map<String, String>) config.getAnyRef(UdpConfigOptions.FIELDS.key());
         } else {
             this.fields = UdpConfigOptions.FIELDS.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.TYPE.key())) {
+            this.type = config.getString(UdpConfigOptions.TYPE.key());
+        } else {
+            this.type = UdpConfigOptions.TYPE.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.RADAR_SOURCE.key())) {
+            this.radarSource = config.getString(UdpConfigOptions.RADAR_SOURCE.key());
+        } else {
+            this.radarSource = UdpConfigOptions.RADAR_SOURCE.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.DELIMITER.key())) {
+            this.delimiter = config.getString(UdpConfigOptions.DELIMITER.key());
+        } else {
+            this.delimiter = UdpConfigOptions.DELIMITER.defaultValue();
         }
     }
 }

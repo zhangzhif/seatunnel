@@ -18,7 +18,7 @@ public class ByteConvertUtil {
      */
     public static void main(String[] args) {
         System.out.println(parse("c6c6"));
-        System.out.println(parse("3AB6231B"));
+        System.out.println(parse("0100"));
         String text =
                 "C6C64200000000003AB6231B000000000F003D00C21F0000A51C8402421E00000E09000058030000CA1F0000A51C8402E01C27000000000026000A000200451A0100";
     }

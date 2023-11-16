@@ -29,4 +29,13 @@ public class UdpConfigOptions {
 
     public static final Option<Map<String, String>> FIELDS =
             Options.key("fields").mapType().noDefaultValue().withDescription("udp source fields");
+
+    public static final Option<String> TYPE =
+            Options.key("type").stringType().noDefaultValue().withDescription("udp type");
+
+    public static final Option<String> RADAR_SOURCE =
+            Options.key("radar_source").stringType().noDefaultValue().withDescription("udp radar source");
+
+    public static final Option<String> DELIMITER =
+            Options.key("delimiter").stringType().noDefaultValue().withDescription("udp delimiter");
 }

@@ -77,6 +77,11 @@
 
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
+            <artifactId>connector-kafka</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-cdc-mysql</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -88,6 +93,11 @@
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-cdc-mongodb</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.seatunnel</groupId>
+            <artifactId>connector-mongodb</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
