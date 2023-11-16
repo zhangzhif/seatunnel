@@ -26,7 +26,6 @@ import org.apache.seatunnel.api.table.type.SeaTunnelRowType;
 import org.apache.seatunnel.api.table.type.SqlType;
 import org.apache.seatunnel.common.exception.CommonErrorCodeDeprecated;
 import org.apache.seatunnel.connectors.seatunnel.mongodb.exception.MongodbConnectorException;
-
 import org.bson.BsonArray;
 import org.bson.BsonBinary;
 import org.bson.BsonBoolean;
@@ -92,11 +91,12 @@ public class RowDataToBsonConverters implements Serializable {
             @Override
             public BsonValue apply(Object value) {
                 if (value == null || NULL.equals(type.getSqlType())) {
-                    throw new MongodbConnectorException(
-                            UNSUPPORTED_DATA_TYPE,
-                            "The column type is <"
-                                    + type
-                                    + ">, but a null value is being written into it");
+                    return null;
+//                    throw new MongodbConnectorException(
+//                            UNSUPPORTED_DATA_TYPE,
+//                            "The column type is <"
+//                                    + type
+//                                    + ">, but a null value is being written into it");
                 } else {
                     return internalConverter.apply(value);
                 }
@@ -137,8 +137,8 @@ public class RowDataToBsonConverters implements Serializable {
                                 value instanceof Byte
                                         ? ((Byte) value) & 0xFF
                                         : value instanceof Short
-                                                ? ((Short) value).intValue()
-                                                : (int) value;
+                                        ? ((Short) value).intValue()
+                                        : (int) value;
                         return new BsonInt32(intValue);
                     }
                 };
