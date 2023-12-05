@@ -15,29 +15,28 @@
  * limitations under the License.
  */
 
-package org.apache.seatunnel.udp.config;
+package org.apache.seatunnel.transform.udpmerge;
 
-public enum UdpSourceType {
+import org.apache.seatunnel.api.configuration.Option;
+import org.apache.seatunnel.api.configuration.Options;
 
-    /** 雷达UDP */
-    Radar("radar"),
+import lombok.Getter;
+import lombok.Setter;
 
-    /** 雷达目标类型UDP */
-    TargetType("targetType"),
-    ;
+import java.io.Serializable;
 
-    private String type;
+@Getter
+@Setter
+public class UdpMergeTransformConfig implements Serializable {
 
-    UdpSourceType(String type) {
-        this.type = type;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    @Override
-    public String toString() {
-        return type;
-    }
+    public static final Option<String> MAIN_STREAMING =
+            Options.key("main_stream")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription("radar streaming");
+    public static final Option<String> TYPE_STREAMING =
+            Options.key("type_stream")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription("type streaming");
 }

@@ -15,30 +15,39 @@
  * limitations under the License.
  */
 
-package org.apache.seatunnel.udp.source;
+package org.apache.seatunnel.transform.udpmerge;
 
 import org.apache.seatunnel.api.configuration.util.OptionRule;
-import org.apache.seatunnel.api.source.SeaTunnelSource;
+import org.apache.seatunnel.api.table.catalog.CatalogTable;
+import org.apache.seatunnel.api.table.connector.TableTransform;
 import org.apache.seatunnel.api.table.factory.Factory;
-import org.apache.seatunnel.api.table.factory.TableSourceFactory;
-import org.apache.seatunnel.udp.config.UdpConfigOptions;
+import org.apache.seatunnel.api.table.factory.TableFactoryContext;
+import org.apache.seatunnel.api.table.factory.TableTransformFactory;
 
 import com.google.auto.service.AutoService;
 
+import static org.apache.seatunnel.transform.udpmerge.UdpMergeTransform.PLUGIN_NAME;
+
 @AutoService(Factory.class)
-public class UdpSourceFactory implements TableSourceFactory {
+public class UdpMergeTransformFactory implements TableTransformFactory {
+
     @Override
     public String factoryIdentifier() {
-        return "UDP";
+        return PLUGIN_NAME;
     }
 
     @Override
     public OptionRule optionRule() {
-        return OptionRule.builder().required(UdpConfigOptions.PORT, UdpConfigOptions.TYPE).build();
+        return OptionRule.builder()
+                .required(
+                        UdpMergeTransformConfig.MAIN_STREAMING,
+                        UdpMergeTransformConfig.TYPE_STREAMING)
+                .build();
     }
 
     @Override
-    public Class<? extends SeaTunnelSource> getSourceClass() {
-        return UdpSource.class;
+    public TableTransform createTransform(TableFactoryContext context) {
+        CatalogTable catalogTable = context.getCatalogTable();
+        return () -> new UdpMergeTransform(context.getOptions(), catalogTable);
     }
 }
