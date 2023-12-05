@@ -17,7 +17,8 @@
 
 package org.apache.seatunnel.udp.source;
 
-import com.google.auto.service.AutoService;
+import org.apache.seatunnel.shade.com.typesafe.config.Config;
+
 import org.apache.seatunnel.api.common.JobContext;
 import org.apache.seatunnel.api.common.PrepareFailException;
 import org.apache.seatunnel.api.common.SeaTunnelAPIErrorCode;
@@ -34,18 +35,15 @@ import org.apache.seatunnel.common.constants.PluginType;
 import org.apache.seatunnel.connectors.seatunnel.common.source.AbstractSingleSplitReader;
 import org.apache.seatunnel.connectors.seatunnel.common.source.AbstractSingleSplitSource;
 import org.apache.seatunnel.connectors.seatunnel.common.source.SingleSplitReaderContext;
-import org.apache.seatunnel.shade.com.typesafe.config.Config;
 import org.apache.seatunnel.udp.config.UdpConfigOptions;
 import org.apache.seatunnel.udp.exception.UdpConnectorException;
 
-import java.util.Map;
+import com.google.auto.service.AutoService;
 
 @AutoService(SeaTunnelSource.class)
 public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
     private UdpSourceParameter parameter;
     private JobContext jobContext;
-    private SeaTunnelDataType<SeaTunnelRow> seaTunnelDataType;
-
 
     @Override
     public Boundedness getBoundedness() {
@@ -63,7 +61,7 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
     public void prepare(Config pluginConfig) throws PrepareFailException {
         CheckResult result =
                 CheckConfigUtil.checkAllExists(
-                        pluginConfig, UdpConfigOptions.PORT.key(), UdpConfigOptions.FIELDS.key(), UdpConfigOptions.TYPE.key());
+                        pluginConfig, UdpConfigOptions.PORT.key(), UdpConfigOptions.TYPE.key());
         if (!result.isSuccess()) {
             throw new UdpConnectorException(
                     SeaTunnelAPIErrorCode.CONFIG_VALIDATION_FAILED,
@@ -81,16 +79,10 @@ public class UdpSource extends AbstractSingleSplitSource<SeaTunnelRow> {
 
     @Override
     public SeaTunnelDataType<SeaTunnelRow> getProducedType() {
-        Map<String, String> fieldsMap = parameter.getFields();
-        int fieldCount = fieldsMap.keySet().size();
-        SeaTunnelDataType<?>[] seaTunnelDataTypes = new SeaTunnelDataType<?>[fieldCount];
-        for (int i = 0; i < fieldCount; i++) {
-            seaTunnelDataTypes[i] = BasicType.STRING_TYPE;
-        }
-        this.seaTunnelDataType =
-                new SeaTunnelRowType(
-                        fieldsMap.keySet().toArray(new String[]{}), seaTunnelDataTypes);
-        return this.seaTunnelDataType;
+        String[] fields = new String[] {"type", "data"};
+        SeaTunnelDataType<?>[] seaTunnelDataTypes =
+                new SeaTunnelDataType<?>[] {BasicType.STRING_TYPE, BasicType.STRING_TYPE};
+        return new SeaTunnelRowType(fields, seaTunnelDataTypes);
     }
 
     @Override

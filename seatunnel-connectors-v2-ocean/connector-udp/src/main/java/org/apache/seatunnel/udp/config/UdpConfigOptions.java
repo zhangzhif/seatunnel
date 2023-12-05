@@ -34,8 +34,26 @@ public class UdpConfigOptions {
             Options.key("type").stringType().noDefaultValue().withDescription("udp type");
 
     public static final Option<String> RADAR_SOURCE =
-            Options.key("radar_source").stringType().noDefaultValue().withDescription("udp radar source");
+            Options.key("radar_source")
+                    .stringType()
+                    .noDefaultValue()
+                    .withDescription("udp radar source");
 
     public static final Option<String> DELIMITER =
             Options.key("delimiter").stringType().noDefaultValue().withDescription("udp delimiter");
+
+    public static final Option<Double> LONGITUDE =
+            Options.key("longitude")
+                    .doubleType()
+                    .defaultValue(0.0)
+                    .withDescription("radar longitude");
+
+    public static final Option<Double> LATITUDE =
+            Options.key("latitude")
+                    .doubleType()
+                    .defaultValue(0.0)
+                    .withDescription("radar latitude");
+
+    public static final Option<Double> HEIGHT =
+            Options.key("height").doubleType().defaultValue(0.0).withDescription("radar height");
 }
