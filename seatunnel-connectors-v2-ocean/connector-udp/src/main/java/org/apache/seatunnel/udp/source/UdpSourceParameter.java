@@ -18,6 +18,7 @@
 package org.apache.seatunnel.udp.source;
 
 import org.apache.seatunnel.shade.com.typesafe.config.Config;
+
 import org.apache.seatunnel.udp.config.UdpConfigOptions;
 
 import java.io.Serializable;
@@ -30,6 +31,11 @@ public class UdpSourceParameter implements Serializable {
     private String type;
     private String radarSource;
     private String delimiter;
+    private double longitude;
+    private double latitude;
+    private double height;
+    // 经纬度
+    private double[] jwd;
 
     public Integer getPort() {
         return Objects.isNull(port) ? UdpConfigOptions.PORT.defaultValue() : port;
@@ -44,11 +50,31 @@ public class UdpSourceParameter implements Serializable {
     }
 
     public String getRadarSource() {
-        return Objects.isNull(radarSource) ? UdpConfigOptions.RADAR_SOURCE.defaultValue() : radarSource;
+        return Objects.isNull(radarSource)
+                ? UdpConfigOptions.RADAR_SOURCE.defaultValue()
+                : radarSource;
     }
 
     public String getDelimiter() {
         return Objects.isNull(delimiter) ? UdpConfigOptions.DELIMITER.defaultValue() : delimiter;
+    }
+
+    public double getLongitude() {
+        return Objects.isNull(longitude) ? UdpConfigOptions.LONGITUDE.defaultValue() : longitude;
+    }
+
+    public double getLatitude() {
+        return Objects.isNull(latitude) ? UdpConfigOptions.LATITUDE.defaultValue() : latitude;
+    }
+
+    public double getHeight() {
+        return Objects.isNull(height) ? UdpConfigOptions.HEIGHT.defaultValue() : height;
+    }
+
+    public double[] getJwd() {
+        return Objects.isNull(longitude) && Objects.isNull(latitude)
+                ? new double[] {}
+                : new double[] {longitude, latitude};
     }
 
     public UdpSourceParameter(Config config) {
@@ -76,6 +102,25 @@ public class UdpSourceParameter implements Serializable {
             this.delimiter = config.getString(UdpConfigOptions.DELIMITER.key());
         } else {
             this.delimiter = UdpConfigOptions.DELIMITER.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.LONGITUDE.key())) {
+            this.longitude = config.getDouble(UdpConfigOptions.LONGITUDE.key());
+        } else {
+            this.longitude = UdpConfigOptions.LONGITUDE.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.LATITUDE.key())) {
+            this.latitude = config.getDouble(UdpConfigOptions.LATITUDE.key());
+        } else {
+            this.latitude = UdpConfigOptions.LATITUDE.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.HEIGHT.key())) {
+            this.height = config.getDouble(UdpConfigOptions.HEIGHT.key());
+        } else {
+            this.height = UdpConfigOptions.HEIGHT.defaultValue();
+        }
+        if (config.hasPath(UdpConfigOptions.LONGITUDE.key())
+                && config.hasPath(UdpConfigOptions.LATITUDE.key())) {
+            this.jwd = new double[] {this.longitude, this.latitude};
         }
     }
 }
