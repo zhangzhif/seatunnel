@@ -38,4 +38,15 @@ hazelcast:
     hazelcast.tcp.join.port.try.count: 30
     hazelcast.logging.type: log4j2
     hazelcast.operation.generic.thread.count: 50
-
+  map:
+    engine*:
+      map-store:
+        enabled: true
+        initial-mode: EAGER
+        factory-class-name: org.apache.seatunnel.engine.server.persistence.FileMapStoreFactory
+        properties:
+          type: hdfs
+          namespace: /tmp/seatunnel/imap
+          clusterName: ocean
+          storage.type: hdfs
+          fs.defaultFS: file:///

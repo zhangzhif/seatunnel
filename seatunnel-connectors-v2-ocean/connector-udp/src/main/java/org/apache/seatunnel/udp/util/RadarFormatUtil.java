@@ -1,5 +1,6 @@
 package org.apache.seatunnel.udp.util;
 
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson.JSONObject;
 
 import java.util.TimeZone;
@@ -22,6 +23,8 @@ public class RadarFormatUtil {
     public static JSONObject formatRadarData(
             String radarId, String originData, double height, double[] position) {
         JSONObject jsonObj = new JSONObject();
+        // 主键
+        jsonObj.put("record_id", IdUtil.objectId());
         // 批次号
         jsonObj.put("batch_no", ByteConvertUtil.parse(originData.substring(124, 128)));
         // 目标类型
@@ -51,8 +54,10 @@ public class RadarFormatUtil {
         // 跟踪状态报文
         jsonObj.put("status", ByteConvertUtil.parse(originData.substring(128, 132)));
         // 当前时间
-        jsonObj.put(
-                "create_time", getRadarTime(ByteConvertUtil.parse(originData.substring(16, 24))));
+        long ts = getRadarTime(ByteConvertUtil.parse(originData.substring(16, 24)));
+        jsonObj.put("create_time", DateFormatUtil.toYmdHms(ts));
+        // 时间戳-毫秒
+        jsonObj.put("ts", ts);
         // 所属雷达
         jsonObj.put("radar_id", radarId);
         // 根据目标x,y轴转换为经纬度。

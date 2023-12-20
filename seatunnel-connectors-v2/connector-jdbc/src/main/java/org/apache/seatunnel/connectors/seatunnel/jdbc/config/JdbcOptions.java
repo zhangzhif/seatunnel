@@ -163,7 +163,6 @@ public interface JdbcOptions {
                     .noDefaultValue()
                     .withDescription("post sql after sink");
 
-
     /** source config */
     Option<String> PARTITION_COLUMN =
             Options.key("partition_column")
