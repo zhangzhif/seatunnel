@@ -65,16 +65,6 @@ public class PostgresDialect implements JdbcDialect {
     }
 
     @Override
-    public String quoteIdentifier(String identifier) {
-        return "\"" + identifier + "\"";
-    }
-
-    @Override
-    public String tableIdentifier(String database, String tableName) {
-        return quoteIdentifier(database) + "." + quoteIdentifier(tableName);
-    }
-
-    @Override
     public String extractTableName(TablePath tablePath) {
         return tablePath.getTableName();
     }

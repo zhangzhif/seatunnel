@@ -31,6 +31,9 @@ seatunnel:
         type: hdfs
         max-retained: 3
         plugin-config:
-          namespace: /tmp/seatunnel/checkpoint_snapshot
-          storage.type: hdfs
-          fs.defaultFS: file:///tmp/ # Ensure that the directory has written permission
+          storage.type: s3
+          s3.bucket: s3a://state/
+          fs.s3a.endpoint: http://172.16.11.131:9000
+          fs.s3a.access.key: admin
+          fs.s3a.secret.key: admin123
+          fs.s3a.aws.credentials.provider: org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider

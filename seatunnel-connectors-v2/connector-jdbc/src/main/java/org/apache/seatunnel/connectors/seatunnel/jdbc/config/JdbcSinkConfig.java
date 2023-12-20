@@ -43,11 +43,8 @@ public class JdbcSinkConfig implements Serializable {
     private boolean enableUpsert;
     @Builder.Default private boolean isPrimaryKeyUpdated = true;
     private boolean supportUpsertByInsertOnly;
-
     private List<String> preSQL;
-
     private List<String> postSQL;
-
 
     public static JdbcSinkConfig of(ReadonlyConfig config) {
         JdbcSinkConfigBuilder builder = JdbcSinkConfig.builder();
