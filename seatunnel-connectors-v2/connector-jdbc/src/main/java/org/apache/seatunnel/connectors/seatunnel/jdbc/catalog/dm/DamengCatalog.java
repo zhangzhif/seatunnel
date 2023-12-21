@@ -76,7 +76,7 @@ public class DamengCatalog extends AbstractJdbcCatalog {
 
     @Override
     protected String getListDatabaseSql() {
-        return "SELECT name FROM v$database";
+            return "select OWNER from dba_objects where object_type='SCH'";
     }
 
     @Override
