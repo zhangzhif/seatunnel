@@ -65,8 +65,8 @@ public class PostgresDialect implements JdbcDialect {
     }
 
     @Override
-    public String extractTableName(TablePath tablePath) {
-        return tablePath.getTableName();
+    public String hashModForField(String fieldName, int mod) {
+        return "(ABS(HASHTEXT(" + quoteIdentifier(fieldName) + ")) % " + mod + ")";
     }
 
     @Override
