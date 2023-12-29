@@ -38,18 +38,20 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.hadoop</groupId>
+            <artifactId>hadoop-client</artifactId>
+            <version>${hadoop3.version}</version>
+        </dependency>
+
         <!--   seatunnel-transforms-v2   -->
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>seatunnel-transforms-v2</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--   seatunnel-transforms-ocean   -->
-        <!--        <dependency>-->
-        <!--            <groupId>org.apache.seatunnel</groupId>-->
-        <!--            <artifactId>seatunnel-transform-ocean</artifactId>-->
-        <!--            <version>${project.version}</version>-->
-        <!--        </dependency>-->
+        <!--   seatunnel-transforms-v2   -->
+
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-fake</artifactId>
@@ -68,11 +70,6 @@
 
         <!--   seatunnel-connector-v2   -->
 
-        <dependency>
-            <groupId>org.apache.seatunnel</groupId>
-            <artifactId>connector-kafka</artifactId>
-            <version>${project.version}</version>
-        </dependency>
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-cdc-mysql</artifactId>
@@ -95,22 +92,12 @@
         </dependency>
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
-            <artifactId>connector-mongodb</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.seatunnel</groupId>
             <artifactId>connector-socket</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.seatunnel</groupId>
-            <artifactId>connector-udp</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
