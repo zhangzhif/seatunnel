@@ -123,6 +123,9 @@ public class GroovyTransform extends AbstractCatalogSupportTransform {
     protected SeaTunnelRow transformRow(SeaTunnelRow inputRow) {
         Object[] fields = inputRow.getFields();
         Object[] newFields = oceanTransform.transformRow(fields);
+        if (newFields == null) {
+            return null;
+        }
         SeaTunnelRow outputRow = rowContainerGenerator.apply(inputRow);
         for (int i = 0; i < newFields.length; i++) {
             outputRow.setField(i, newFields[i]);
